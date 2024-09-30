@@ -14,7 +14,7 @@ const UsuarioForm = () => {
     }
 
     try {
-      await axios.post('http://192.168.1.105:3000/usuarios', { nome, email });
+      await axios.post('http://192.168.0.48:3000/usuarios', { nome, email });
       Alert.alert('Sucesso', 'Usuário criado com sucesso!');
       setNome('');
       setEmail('');

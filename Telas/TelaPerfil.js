@@ -1,17 +1,33 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function TelaPerfil() {
+  const navigation = useNavigation();
+
+  const logout = () => {
+    // Aqui você pode adicionar a lógica para invalidar o token ou sessão no backend, se necessário
+    // Por exemplo, se você estiver usando um token JWT, pode armazená-lo no armazenamento local e removê-lo aqui
+
+    // Remover o token do armazenamento local (exemplo)
+    // AsyncStorage.removeItem('token'); // caso você esteja usando AsyncStorage
+
+    // Redirecionar para a tela de login
+    Alert.alert("Logout", "Você foi desconectado com sucesso!", [
+      { text: "OK", onPress: () => navigation.navigate("TelaDeLogin") }
+    ]);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require('../image/Andersonperfil.png')} //adicionando a Foto
+          source={require('../image/Andersonperfil.png')} // adicionando a Foto
           style={styles.profileImage}
         />
         <Text style={styles.name}>José Anderson Azevedo Da Silva</Text>
         <Text style={styles.email}>andersonazessilva@gmail.com</Text>
-        <Text style={styles.code}>Código CIEE: <Text style={styles.codeHighlight}>DG78342</Text></Text>
+        <Text style={styles.code}>Matricula: <Text style={styles.codeHighlight}>DG061195</Text></Text>
       </View>
 
       <View style={styles.menu}>
@@ -38,6 +54,9 @@ export default function TelaPerfil() {
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.menuText}>Nacionalidade</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={logout}>
+          <Text style={styles.menuText}>Sair</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

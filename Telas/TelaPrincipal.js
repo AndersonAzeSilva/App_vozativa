@@ -42,9 +42,6 @@ function More({ navigation }) {
       <TouchableOpacity style={styles.moreItem}>
         <Text style={styles.moreText}>Fale com VozAtiva</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.moreItem}>
-        <Text style={[styles.moreText, { color: 'red' }]}>Sair</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }

@@ -19,10 +19,10 @@ export default function TelaInicio() {
 
             <View style={styles.containerLogo}>
                 <Animatable.Image //adicionando uma animação a imagem
-                delay={900} animation="zoomInUp"//criando uma propriedade para animação //exemplo de animações zommInUp
-                source={require('../image/Logomao.png')} //adicionando a logo
-                style= {{ width: '100%' }}
-                resizeMode="contain"
+                    delay={900} animation="zoomInUp"//criando uma propriedade para animação //exemplo de animações zommInUp
+                    source={require('../image/Logomao.png')} //adicionando a logo
+                    style={{ width: '100%' }}
+                    resizeMode="contain"
                 />
             </View>
 
@@ -30,9 +30,9 @@ export default function TelaInicio() {
                 <Text style={styles.title}>No APP VozAtiva, você pode mais.</Text>
                 <Text> Faça o login para começar</Text>
 
-                <TouchableOpacity 
-                style={styles.button}
-                onPress={ () => navigation.navigate('TelaDeLogin')} //chamando a minha tela de login ao clicar no botão de Login
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('TelaDeLogin')} //chamando a minha tela de login ao clicar no botão de Login
                 >
                     <Text style={styles.buttonText}>Começar</Text>
                 </TouchableOpacity>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#3e606f'
     },
-    containerLogo:{
+    containerLogo: {
         flex: 2,
         backgroundColor: '#3e606f', //cor do container da logo
         justifyContent: 'center', //centralizando a logo
@@ -66,13 +66,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 28,
         marginBottom: 12,
-    }, 
+    },
     //Adicionando estilo ao terceiro texto
-    Text:{
+    Text: {
         color: '#a1a1a1'
     },
     //Pesonalizando o botão de logar
-    button:{
+    button: {
         position: 'absolute',
         backgroundColor: '#3e606f',
         borderRadius: 50,

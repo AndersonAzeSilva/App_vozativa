@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Alert, TouchableOpacity, Text as RNText } from "react-native";
+import { View, StyleSheet, TextInput, Alert, TouchableOpacity, Text as RNText, ActivityIndicator } from "react-native";
 import { Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
@@ -11,13 +11,15 @@ export default function TelaDeLogin() {
     const [data, setData] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false); // Estado para loading
 
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
     const isValidPassword = (password) => password.length >= 6;
 
     const loginUser = async () => {
         try {
-            const response = await fetch('http://192.168.1.105:3000/login', {
+            setLoading(true); // Inicia o loading
+            const response = await fetch('http://192.168.0.48:3000/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: data.email, senha: data.password }),
@@ -32,6 +34,8 @@ export default function TelaDeLogin() {
         } catch (error) {
             console.error(error);
             throw new Error('Erro ao realizar login: ' + error.message);
+        } finally {
+            setLoading(false); // Para o loading
         }
     };
 
@@ -103,23 +107,29 @@ export default function TelaDeLogin() {
 
                 {error ? <RNText style={styles.errorText}>{error}</RNText> : null}
 
-                <Button
-                    icon={<Icon name="check" size={15} color="white" />}
-                    title="Entrar"
-                    buttonStyle={specificStyle.button}
-                    onPress={entrar}
-                />
+                {loading ? ( // Indicador de carregamento
+                    <ActivityIndicator size="large" color="#3e606f" style={styles.loadingIndicator} />
+                ) : (
+                    <>
+                        <Button
+                            icon={<Icon name="check" size={15} color="white" />}
+                            title="Entrar"
+                            buttonStyle={specificStyle.button}
+                            onPress={entrar}
+                        />
 
-                <Button
-                    icon={<Icon name="user" size={15} color="white" />}
-                    title="Cadastrar"
-                    buttonStyle={specificStyle.button}
-                    onPress={cadastrar}
-                />
+                        <Button
+                            icon={<Icon name="user" size={15} color="white" />}
+                            title="Cadastrar"
+                            buttonStyle={specificStyle.button}
+                            onPress={cadastrar}
+                        />
 
-                <TouchableOpacity onPress={recuperarSenha}>
-                    <Text style={styles.recoverPasswordText}>Recuperar Senha</Text>
-                </TouchableOpacity>
+                        <TouchableOpacity onPress={recuperarSenha}>
+                            <Text style={styles.recoverPasswordText}>Recuperar Senha</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
             </Animatable.View>
         </View>
     );
@@ -180,6 +190,9 @@ const styles = StyleSheet.create({
         color: '#3e606f',
         marginTop: 15,
         textAlign: 'center',
+    },
+    loadingIndicator: {
+        marginVertical: 20,
     },
 });
 

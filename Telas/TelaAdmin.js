@@ -19,8 +19,6 @@ const TelaAdmin = ({ navigation }) => {
 
   const usuarios = [
     { id: '1', nome: 'Usuário 1' },
-    { id: '2', nome: 'Usuário 2' },
-    { id: '3', nome: 'Usuário 3' },
   ];
 
   const buttons = [

@@ -9,7 +9,7 @@ const UsuariosList = () => {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await axios.get('http://192.168.1.105:3000/usuarios');
+        const response = await axios.get('http://192.168.0.48:3000/usuarios');
         setUsuarios(response.data);
       } catch (error) {
         console.error('Erro ao buscar usuários: ', error);

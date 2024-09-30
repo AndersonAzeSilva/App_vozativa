@@ -23,7 +23,7 @@ const IncidentManagementScreen = () => {
 
   const loadIncidents = async () => {
     try {
-      const response = await fetch('http://192.168.1.105:3000/incidents');
+      const response = await fetch('http://192.168.0.48:3000/incidents');
       const data = await response.json();
       setIncidents(data);
     } catch (error) {
@@ -49,7 +49,7 @@ const IncidentManagementScreen = () => {
 
   const registerIncident = async (incident) => {
     try {
-      const response = await fetch('http://192.168.1.105:3000/incidents', {
+      const response = await fetch('http://192.168.0.48:3000/incidents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const IncidentManagementScreen = () => {
           text: 'Excluir',
           onPress: async () => {
             try {
-              await fetch(`http://192.168.1.105:3000/incidents/${id}`, {
+              await fetch(`http://192.168.0.48:3000/incidents/${id}`, {
                 method: 'DELETE',
               });
               loadIncidents();

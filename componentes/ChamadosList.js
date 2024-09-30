@@ -8,7 +8,7 @@ const ChamadosList = () => {
   useEffect(() => {
     const fetchChamados = async () => {
       try {
-        const response = await axios.get('http://192.168.1.105:3000/chamados');
+        const response = await axios.get('http://192.168.0.48:3000/chamados');
         setChamados(response.data);
       } catch (error) {
         console.error('Erro ao buscar chamados: ', error);
