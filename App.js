@@ -6,7 +6,7 @@ import TelaDeLogin from './Telas/TelaDeLogin';
 import TelaInicio from './Telas/TelaInicio';
 import TelaPrincipal from './Telas/TelaPrincipal';
 import TelaDeCadastro from './Telas/TelaDeCadastro';
-import TelaDePerfil from './Telas/TelaDePerfil';
+import TelaPerfil from './Telas/TelaPerfil';
 import TelaDeOcorrencia from './Telas/TelaDeOcorrencia';
 import TelaRelatorios from './Telas/TelaRelatorios';
 import TelaUsuarios from './Telas/TelaUsuarios';
@@ -28,7 +28,7 @@ function Rotas() {
       <Stack.Screen name="TelaDeLogin" component={TelaDeLogin} />
       <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} />
       <Stack.Screen name="TelaDeCadastro" component={TelaDeCadastro} />
-      <Stack.Screen name="TelaDePerfil" component={TelaDePerfil} />
+      <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaDeOcorrencia" component={TelaDeOcorrencia} />
       <Stack.Screen name ="TelaRelatorios" component={TelaRelatorios} />
       <Stack.Screen name ="TelaUsuarios" component={TelaUsuarios} />
