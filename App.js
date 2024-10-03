@@ -19,7 +19,7 @@ import TelaUsuarios from './Telas/TelaUsuarios';
 import TelaNotificacoes from './Telas/TelaNotificacoes';
 import TelaImportarExportar from './Telas/TelaImportarExportar';
 import TelaHistorico from './Telas/TelaHistorico';
-import TelaChamados from './Telas/TelaChamados';
+import TelaChamados from './Telas/TelaGerenciarOcorrencias';
 import TelaComentarios from './Telas/TelaComentarios';
 import TelaAdmin from './Telas/TelaAdmin';
 import TelaDeRecuperacaoSenha from './Telas/TelaDeRecuperacaoSenha';

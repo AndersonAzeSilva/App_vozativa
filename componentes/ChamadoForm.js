@@ -1,4 +1,4 @@
- 
+// componentes/ChamadoForm.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
@@ -24,7 +24,7 @@ const ChamadoForm = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         placeholder="Título"
         value={titulo}
@@ -43,6 +43,9 @@ const ChamadoForm = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
   input: {
     height: 40,
     borderColor: 'gray',
