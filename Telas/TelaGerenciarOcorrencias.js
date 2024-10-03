@@ -18,7 +18,7 @@ const TelaGerenciarOcorrencias = () => {
   useEffect(() => {
     const fetchOcorrencias = async () => {
       try {
-        const response = await axios.get('http://192.168.0.48:3000/incidents'); // URL da sua API
+        const response = await axios.get('http://192.168.0.74:3000/incidents'); // URL da sua API
         const ocorrencias = response.data;
 
         // Ignorar ocorrências sem status

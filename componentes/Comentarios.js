@@ -14,7 +14,7 @@ const Comentarios = () => {
     }
 
     try {
-      await axios.post('http://192.168.0.48:3000/comentarios', { comentario });
+      await axios.post('http://192.168.0.74:3000/comentarios', { comentario });
       setComentariosList([...comentariosList, { comentario }]);
       setComentario('');
     } catch (error) {

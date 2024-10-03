@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Alert, TouchableOpacity, Text as RNText, ActivityIndicator } from "react-native";
 import { Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import * as Animatable from 'react-native-animatable';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
 
 export default function TelaDeLogin() {
     const navigation = useNavigation();
 
     const [data, setData] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false); // Estado para loading
 
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
@@ -19,7 +21,7 @@ export default function TelaDeLogin() {
     const loginUser = async () => {
         try {
             setLoading(true); // Inicia o loading
-            const response = await fetch('http://192.168.0.48:3000/login', {
+            const response = await fetch('http://192.168.0.74:3000/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: data.email, senha: data.password }),
@@ -39,21 +41,50 @@ export default function TelaDeLogin() {
         }
     };
 
+    // Implementação do login com Google
+    const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+        clientId: '119836842505-voh13dm2f4t8eb7toll5g3st288sp7gg.apps.googleusercontent.com', // Seu Google Client ID
+        redirectUri: 'http://localhost:3000/auth/google/callback',
+    });
+
+    useEffect(() => {
+        if (response?.type === 'success') {
+            const { id_token } = response.params;
+
+            // Envie o id_token para sua API para autenticação
+            fetch('http://192.168.0.74:3000/google-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_token }),
+            })
+                .then(res => res.json())
+                .then(result => {
+                    Alert.alert("Sucesso", "Login com Google realizado com sucesso!");
+                    navigation.navigate(result.user.nivel === 1 ? "TelaAdmin" : "TelaPrincipal", { user: result.user });
+                })
+                .catch(error => {
+                    console.error('Erro ao fazer login com Google:', error);
+                    setError('Erro ao realizar login com Google.');
+                });
+        }
+    }, [response]);
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const entrar = async () => {
-        setError("");
+        setError({ email: "", password: "" });
 
         if (!data.email || !data.password) {
-            setError("Por favor, preencha todos os campos.");
+            setError({ ...error, email: "Por favor, preencha todos os campos." });
             return;
         }
 
         if (!isValidEmail(data.email)) {
-            setError("E-mail inválido.");
+            setError({ ...error, email: "E-mail inválido." });
             return;
         }
 
         if (!isValidPassword(data.password)) {
-            setError("A senha deve ter pelo menos 6 caracteres.");
+            setError({ ...error, password: "A senha deve ter pelo menos 6 caracteres." });
             return;
         }
 
@@ -68,7 +99,7 @@ export default function TelaDeLogin() {
                 navigation.navigate("TelaPrincipal", { user: result.user });
             }
         } catch (error) {
-            setError(error.message);
+            setError({ ...error, email: error.message });
         }
     };
 
@@ -83,31 +114,37 @@ export default function TelaDeLogin() {
 
             <Animatable.View animation="fadeInUp" style={styles.containerForm}>
                 <Text style={styles.title}>E-mail</Text>
-                <TextInput
-                    placeholder="Digite o seu E-mail"
-                    style={styles.input}
-                    onChangeText={e => setData(prev => ({ ...prev, email: e }))} 
-                    keyboardType="email-address"
-                    placeholderTextColor="#A9A9A9"
-                />
+                <Animatable.View animation={error.email ? 'shake' : undefined} style={error.email ? styles.inputError : null}>
+                    <TextInput
+                        placeholder="Digite o seu E-mail"
+                        style={styles.input}
+                        onChangeText={e => setData(prev => ({ ...prev, email: e }))}
+                        keyboardType="email-address"
+                        placeholderTextColor="#A9A9A9"
+                    />
+                </Animatable.View>
+
+                {error.email ? <RNText style={styles.errorText}>{error.email}</RNText> : null}
 
                 <Text style={styles.title}>Senha</Text>
                 <View style={styles.passwordContainer}>
-                    <TextInput
-                        placeholder="Digite a sua Senha"
-                        style={styles.input}
-                        secureTextEntry={!showPassword}
-                        onChangeText={e => setData(prev => ({ ...prev, password: e }))}
-                        placeholderTextColor="#A9A9A9"
-                    />
+                    <Animatable.View animation={error.password ? 'shake' : undefined} style={error.password ? styles.inputError : null}>
+                        <TextInput
+                            placeholder="Digite a sua Senha"
+                            style={styles.input}
+                            secureTextEntry={!showPassword}
+                            onChangeText={e => setData(prev => ({ ...prev, password: e }))}
+                            placeholderTextColor="#A9A9A9"
+                        />
+                    </Animatable.View>
                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                         <Icon name={showPassword ? "eye" : "eye-slash"} size={24} color="black" />
                     </TouchableOpacity>
                 </View>
 
-                {error ? <RNText style={styles.errorText}>{error}</RNText> : null}
+                {error.password ? <RNText style={styles.errorText}>{error.password}</RNText> : null}
 
-                {loading ? ( // Indicador de carregamento
+                {loading ? ( // Indicador de carregamento no botão
                     <ActivityIndicator size="large" color="#3e606f" style={styles.loadingIndicator} />
                 ) : (
                     <>
@@ -125,6 +162,13 @@ export default function TelaDeLogin() {
                             onPress={cadastrar}
                         />
 
+                        {/* Botão de Login com Google */}
+                        <Button
+                            icon={<Icon name="google" size={15} color="white" />}
+                            title="Entrar com Google"
+                            buttonStyle={specificStyle.button}
+                            onPress={() => { promptAsync(); }}
+                        />
                         <TouchableOpacity onPress={recuperarSenha}>
                             <Text style={styles.recoverPasswordText}>Recuperar Senha</Text>
                         </TouchableOpacity>
@@ -176,6 +220,10 @@ const styles = StyleSheet.create({
         borderColor: '#3e606f',
         paddingHorizontal: 10,
     },
+    inputError: {
+        borderBottomColor: 'red',
+        borderBottomWidth: 2,
+    },
     passwordContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -199,10 +247,7 @@ const styles = StyleSheet.create({
 const specificStyle = StyleSheet.create({
     button: {
         backgroundColor: '#3e606f',
-        width: '100%',
-        borderRadius: 10,
-        paddingVertical: 10,
+        borderRadius: 5,
         marginTop: 15,
-        elevation: 3,
     },
 });

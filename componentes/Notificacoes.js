@@ -8,7 +8,7 @@ const Notificacoes = () => {
   useEffect(() => {
     const fetchNotificacoes = async () => {
       try {
-        const response = await axios.get('http://192.168.0.48:3000/notificacoes');
+        const response = await axios.get('http://192.168.0.74:3000/notificacoes');
         setNotificacoes(response.data);
       } catch (error) {
         console.error('Erro ao buscar notificações: ', error);
