@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
-import ChamadosList from '../componentes/OcorrenciasList'; // Verifique se o caminho está correto
+import OcorrenciasList from '../componentes/OcorrenciasList'; // Verifique se o caminho está correto
 import StatusCard from '../componentes/StatusCard'; // Verifique se o caminho está correto
 import axios from 'axios';
 
@@ -14,36 +14,50 @@ const TelaGerenciarOcorrencias = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  const [ocorrencias, setOcorrencias] = useState([]); // Novo estado para armazenar as ocorrências
 
   useEffect(() => {
-    const fetchOcorrencias = async () => {
-      try {
-        const response = await axios.get('http://192.168.0.74:3000/incidents'); // URL da sua API
-        const ocorrencias = response.data;
-
-        // Ignorar ocorrências sem status
-        const statusValidos = ['nova', 'pendente', 'resolvida', 'encerrada'];
-        const filtradasOcorrencias = ocorrencias.filter(o => statusValidos.includes(o.status));
-
-        // Calcule as contagens
-        const novas = filtradasOcorrencias.filter(o => o.status === 'nova').length;
-        const pendentes = filtradasOcorrencias.filter(o => o.status === 'pendente').length;
-        const resolvidas = filtradasOcorrencias.filter(o => o.status === 'resolvida').length;
-        const encerradas = filtradasOcorrencias.filter(o => o.status === 'encerrada').length;
-
-        setDadosOcorrencias({ novas, pendentes, resolvidas, encerradas });
-      } catch (err) {
-        setError(`Erro ao carregar dados de ocorrências: ${err.message}`); // Corrigido aqui
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOcorrencias();
+    fetchOcorrencias(); // Carrega ocorrências ao montar o componente
   }, []);
+
+  const fetchOcorrencias = async () => {
+    try {
+      const response = await axios.get('http://192.168.0.74:3000/incidents'); // URL da sua API
+      const ocorrencias = response.data;
+
+      // Ignorar ocorrências sem status
+      const statusValidos = ['nova', 'pendente', 'resolvida', 'encerrada'];
+      const filtradasOcorrencias = ocorrencias.filter(o => statusValidos.includes(o.status));
+
+      // Calcule as contagens
+      const novas = filtradasOcorrencias.filter(o => o.status === 'nova').length;
+      const pendentes = filtradasOcorrencias.filter(o => o.status === 'pendente').length;
+      const resolvidas = filtradasOcorrencias.filter(o => o.status === 'resolvida').length;
+      const encerradas = filtradasOcorrencias.filter(o => o.status === 'encerrada').length;
+
+      setDadosOcorrencias({ novas, pendentes, resolvidas, encerradas });
+      setOcorrencias(filtradasOcorrencias); // Armazena a lista de ocorrências no estado
+    } catch (err) {
+      setError(`Erro ao carregar dados de ocorrências: ${err.message}`); // Corrigido aqui
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCardPress = (status) => {
     setSelectedStatus(status); // Define o status selecionado
+  };
+
+  const handleOcorrenciaAdd = async (novaOcorrencia) => {
+    // Função para registrar uma nova ocorrência
+    await axios.post('http://192.168.0.74:3000/incidents', novaOcorrencia); // Chama a API para adicionar
+    fetchOcorrencias(); // Atualiza as ocorrências após adicionar
+  };
+
+  const handleOcorrenciaEncerrar = async (id) => {
+    // Função para encerrar uma ocorrência
+    await axios.patch(`http://192.168.0.74:3000/incidents/${id}`, { status: 'encerrada' }); // Chama a API para encerrar
+    fetchOcorrencias(); // Atualiza as ocorrências após encerrar
   };
 
   if (loading) {
@@ -72,7 +86,12 @@ const TelaGerenciarOcorrencias = () => {
         </TouchableOpacity>
       </View>
       {selectedStatus && (
-        <ChamadosList status={selectedStatus} /> // Passa o status selecionado para a lista de chamados
+        <OcorrenciasList
+          status={selectedStatus}
+          ocorrencias={ocorrencias} // Passa a lista completa de ocorrências
+          onOcorrenciaAdd={handleOcorrenciaAdd} // Passa a função para adicionar ocorrências
+          onOcorrenciaEncerrar={handleOcorrenciaEncerrar} // Passa a função para encerrar ocorrências
+        />
       )}
     </View>
   );

@@ -12,43 +12,20 @@ const data = {
 const screenWidth = Dimensions.get('window').width;
 
 const TelaAdmin = ({ navigation }) => {
-  const usuarioLogado = {
-    nome: 'Administrador',
-    status: 'Online',
-  };
-
-  const usuarios = [
-    { id: '1', nome: 'Usuário 1', status: 'Ativo' },
-    // Outros usuários podem ser adicionados aqui
-  ];
-
-  const buttons = [
-    { title: 'Gerenciar Ocorrências', icon: 'list', screen: 'TelaChamados' },
-    { title: 'Ver Histórico', icon: 'time', screen: 'TelaHistorico' },
-    { title: 'Notificações', icon: 'notifications', screen: 'TelaNotificacoes' },
-    { title: 'Relatórios', icon: 'stats-chart', screen: 'TelaRelatorios' },
-  ];
-
   const [modalVisible, setModalVisible] = useState(false);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <Text style={styles.itemText}>{item.nome}</Text>
-      <Text style={styles.itemStatus}>{item.status}</Text>
-      <TouchableOpacity
-        style={styles.detailsButton}
-        onPress={() => {
-          setModalVisible(true);
-        }}
-      >
-        <Text style={styles.detailsButtonText}>Ver Detalhes</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const buttons = [
+    { title: 'Gerenciar Ocorrências', icon: 'list', screen: 'TelaChamados', color: '#4CAF50' },
+    { title: 'Ver Histórico', icon: 'time', screen: 'TelaHistorico', color: '#2196F3' },
+    { title: 'Notificações', icon: 'notifications', screen: 'TelaNotificacoes', color: '#FF9800' },
+    { title: 'Relatórios', icon: 'stats-chart', screen: 'TelaRelatorios', color: '#9C27B0' },
+    { title: 'Cadastrar Secretaria', icon: 'person-add', screen: 'TelaCadastrarSecretaria', color: '#3F51B5' },
+    { title: 'Consultar Secretaria', icon: 'search', screen: 'TelaConsultarSecretaria', color: '#E91E63' },
+  ];
 
   const renderButton = ({ item }) => (
     <TouchableOpacity
-      style={styles.button}
+      style={[styles.button, { backgroundColor: item.color }]}
       onPress={() => navigation.navigate(item.screen)}
     >
       <Ionicons name={item.icon} size={24} color="#fff" />
@@ -58,11 +35,6 @@ const TelaAdmin = ({ navigation }) => {
 
   const renderContent = () => (
     <>
-      <View style={styles.profileContainer}>
-        <Text style={styles.profileText}>Usuário: {usuarioLogado.nome}</Text>
-        <Text style={styles.profileStatus}>Status: {usuarioLogado.status}</Text>
-      </View>
-
       <Text style={styles.title}>Painel do Administrador</Text>
 
       <Text style={styles.chartTitle}>Estatísticas de Ocorrências</Text>
@@ -72,14 +44,6 @@ const TelaAdmin = ({ navigation }) => {
         height={220}
         chartConfig={chartConfig}
         style={styles.chart}
-      />
-
-      <Text style={styles.subTitle}>Usuários Cadastrados</Text>
-      <FlatList
-        data={usuarios}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
       />
     </>
   );
@@ -129,22 +93,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fafafa',
   },
-  profileContainer: {
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 3,
-  },
-  profileText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  profileStatus: {
-    fontSize: 18,
-    color: '#4CAF50',
-  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -168,7 +116,6 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007BFF',
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,
@@ -178,43 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
-  },
-  subTitle: {
-    fontSize: 22,
-    marginVertical: 15,
-    fontWeight: 'bold',
-    color: '#555',
-  },
-  listContainer: {
-    paddingBottom: 30,
-  },
-  item: {
-    padding: 15,
-    marginVertical: 5,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  itemStatus: {
-    fontSize: 16,
-    color: '#4CAF50', // Cor para status ativo
-  },
-  detailsButton: {
-    backgroundColor: '#6C757D',
-    paddingVertical: 7,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  detailsButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   // Estilos do modal
   modalContainer: {

@@ -1,13 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Importação das Bibliotecas
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 import React from 'react';
 import { StatusBar } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native'
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Importação das Telas
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
+
+// Importação das telas
 import TelaDeLogin from './Telas/TelaDeLogin';
 import TelaInicio from './Telas/TelaInicio';
 import TelaPrincipal from './Telas/TelaPrincipal';
@@ -23,41 +20,55 @@ import TelaChamados from './Telas/TelaGerenciarOcorrencias';
 import TelaComentarios from './Telas/TelaComentarios';
 import TelaAdmin from './Telas/TelaAdmin';
 import TelaDeRecuperacaoSenha from './Telas/TelaDeRecuperacaoSenha';
-import IncidentManagementScreen from './Telas/TelaDeOcorrencia';
+import TelaCadastrarSecretaria from './Telas/TelaCadastrarSecretaria'
+import TelaConsultarSecretaria from './Telas/TelaConsultarSecretaria'
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Criando as rotas de navegação entre as telas
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Rotas() {
+function StackNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="TelaInicio" component={TelaInicio} options={{ headerShown: false }} />
-      <Stack.Screen name="TelaDeLogin" component={TelaDeLogin} options={{ title: '' }} />
-      <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} options={{ title: '' , headerShown: false }} />
-      <Stack.Screen name="TelaDeCadastro" component={TelaDeCadastro} options={{ title: '' }} />
-      <Stack.Screen name="TelaPerfil" component={TelaPerfil} options={{ title: '' }} />
-      <Stack.Screen name="TelaDeOcorrencia" component={TelaDeOcorrencia} options={{ title: '' }} />
-      <Stack.Screen name="TelaRelatorios" component={TelaRelatorios} options={{ title: '' }} />
-      <Stack.Screen name="TelaUsuarios" component={TelaUsuarios} options={{ title: '' }} />
-      <Stack.Screen name="TelaNotificacoes" component={TelaNotificacoes} options={{ title: '' }} />
-      <Stack.Screen name="TelaImportarExportar" component={TelaImportarExportar} options={{ title: '' }} />
-      <Stack.Screen name="TelaHistorico" component={TelaHistorico} options={{ title: '' }} />
-      <Stack.Screen name="TelaChamados" component={TelaChamados} options={{ title: '' }} />
-      <Stack.Screen name="TelaComentarios" component={TelaComentarios} options={{ title: '' }} />
-      <Stack.Screen name="TelaAdmin" component={TelaAdmin} options={{ title: '' }} />
-      <Stack.Screen name="TelaDeRecuperacaoSenha" component={TelaDeRecuperacaoSenha} options={{ title: '' }} />
-      <Stack.Screen name="IncidentManagementScreen" component={IncidentManagementScreen} options={{ title: '' }} />
+      <Stack.Screen name="TelaDeLogin" component={TelaDeLogin} options={{ headerShown: false }} />
+      <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} options={{ headerShown: false }} />
+      <Stack.Screen name="TelaDeCadastro" component={TelaDeCadastro} />
+      <Stack.Screen name="TelaDeOcorrencia" component={TelaDeOcorrencia} />
+      <Stack.Screen name="TelaRelatorios" component={TelaRelatorios} />
+      <Stack.Screen name="TelaUsuarios" component={TelaUsuarios} />
+      <Stack.Screen name="TelaNotificacoes" component={TelaNotificacoes} />
+      <Stack.Screen name="TelaImportarExportar" component={TelaImportarExportar} />
+      <Stack.Screen name="TelaHistorico" component={TelaHistorico} />
+      <Stack.Screen name="TelaChamados" component={TelaChamados} />
+      <Stack.Screen name="TelaComentarios" component={TelaComentarios} />
+      <Stack.Screen name="TelaDeRecuperacaoSenha" component={TelaDeRecuperacaoSenha} />
+      <Stack.Screen name="TelaCadastrarSecretaria" component={TelaCadastrarSecretaria} />
+      <Stack.Screen name="TelaConsultarSecretaria" component={TelaConsultarSecretaria} />
+      {/* Adicione a TelaAdmin ao StackNavigator */}
+      <Stack.Screen name="TelaAdmin" component={AdminNavigator} options={{ headerShown: false }} />
     </Stack.Navigator>
-  )
+  );
 }
 
-export default function App() {
+function AdminNavigator() {
+  return (
+    <Drawer.Navigator initialRouteName="TelaAdmin">
+      <Drawer.Screen name="Inicio" component={TelaAdmin} />
+      <Drawer.Screen name="Perfil" component={TelaPerfil} />
+      {/* Adicione mais telas ao Drawer se necessário */}
+    </Drawer.Navigator>
+  );
+}
+
+const AppNavigator = () => {
   return (
     <NavigationContainer>
       <StatusBar backgroundColor="#38A69D" barStyle="light-content" />
-      <Rotas />
+      <Stack.Navigator>
+        <Stack.Screen name="Stack" component={StackNavigator} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+export default AppNavigator;
