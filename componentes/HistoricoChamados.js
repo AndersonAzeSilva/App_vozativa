@@ -8,7 +8,7 @@ const HistoricoChamados = () => {
   useEffect(() => {
     const fetchHistorico = async () => {
       try {
-        const response = await axios.get('http://192.168.0.74:3000/historico');
+        const response = await axios.get('http:// 192.168.0.74:3000/historico');
         setHistorico(response.data);
       } catch (error) {
         console.error('Erro ao buscar histórico: ', error);

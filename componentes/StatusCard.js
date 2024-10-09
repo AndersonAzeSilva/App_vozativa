@@ -2,7 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-const StatusCard = ({ title = 'Título', count = 0, color = '#007BFF' }) => {
+const StatusCard = ({ 
+  title = 'Título', 
+  count = 0, 
+  color = '#007BFF' 
+}) => {
   return (
     <View style={[styles.card, { backgroundColor: color }]}>
       <Text style={styles.title}>{title}</Text>
