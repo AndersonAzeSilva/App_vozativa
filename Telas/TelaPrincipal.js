@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import IncidentManagementScreen from './TelaDeOcorrencia'; // Corrigindo a importação da tela de gerenciamento de ocorrências
+import TelaDeAgendamento from './TelaDeAgendamento';
 
 // Componente Feed
 function Feed() {
@@ -23,12 +24,12 @@ function More({ navigation }) {
   return (
     <ScrollView style={styles.moreContainer}>
       <Text style={styles.moreHeader}>Mais</Text>
-      
+
       {/* Botão de Perfil */}
       <TouchableOpacity style={styles.moreItem} onPress={navigateToProfile}>
         <Text style={styles.moreText}>Perfil</Text>
       </TouchableOpacity>
-      
+
       {/* Outras seções */}
       <TouchableOpacity style={styles.moreItem}>
         <Text style={styles.moreText}>Notificações</Text>
@@ -73,6 +74,16 @@ export default function TelaPrincipal() {
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Agendamento"
+        component={TelaDeAgendamento} // Componente da tela de agendamento
+        options={{
+          tabBarLabel: 'Agendar',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="calendar" color={color} size={size} />
           ),
         }}
       />

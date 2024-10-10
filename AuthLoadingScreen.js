@@ -12,10 +12,10 @@ const AuthLoadingScreen = () => {
             const token = await AsyncStorage.getItem('userToken');
             if (token) {
                 // Token encontrado, redireciona para a TelaPrincipal
-                navigation.navigate('TelaPrincipal');
+                navigation.navigate('Principal');
             } else {
                 // Sem token, redireciona para a tela de login
-                navigation.navigate('TelaDeLogin');
+                navigation.navigate('Login');
             }
             setLoading(false);
         };

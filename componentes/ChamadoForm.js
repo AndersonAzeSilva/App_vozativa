@@ -14,7 +14,7 @@ const ChamadoForm = () => {
     }
 
     try {
-      await axios.post('http:// 192.168.0.74:3000/chamados', { titulo, descricao });
+      await axios.post('http://192.168.0.74:3000/chamados', { titulo, descricao });
       Alert.alert('Sucesso', 'Chamado criado com sucesso!');
       setTitulo('');
       setDescricao('');

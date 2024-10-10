@@ -21,7 +21,7 @@ export default function TelaDeLogin() {
     const loginUser = async () => {
         try {
             setLoading(true); // Inicia o loading
-            const response = await fetch('http://192.168.0.74:3000/login', {
+            const response = await fetch('http://172.16.0.61:3000/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: data.email, senha: data.password }),
@@ -52,7 +52,7 @@ export default function TelaDeLogin() {
             const { id_token } = response.params;
 
             // Envie o id_token para sua API para autenticação
-            fetch('http://192.168.0.74:3000/google-login', {
+            fetch('http://172.16.0.61:3000/google-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_token }),
