@@ -45,7 +45,7 @@ const TelaCadastrarSecretaria = () => {
 
     try {
       // Cadastrar a secretária e os horários
-      const secretaryResponse = await fetch('http://172.16.0.61:3000/secretaries', {
+      const secretaryResponse = await fetch('http://192.168.0.74:3000/secretaries', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

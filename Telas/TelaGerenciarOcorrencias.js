@@ -25,7 +25,7 @@ const TelaGerenciarOcorrencias = () => {
 
   const fetchOcorrencias = async () => {
     try {
-      const response = await axios.get('http://172.16.0.61:3000/incidents');
+      const response = await axios.get('http://192.168.0.74:3000/incidents');
       const ocorrencias = response.data;
 
       const statusValidos = ['nova', 'pendente', 'em atendimento', 'resolvida', 'encerrada'];
@@ -47,12 +47,12 @@ const TelaGerenciarOcorrencias = () => {
   };
 
   const handleOcorrenciaAdd = async (novaOcorrencia) => {
-    await axios.post('http://172.16.0.61:3000/incidents', novaOcorrencia);
+    await axios.post('http://192.168.0.74:3000/incidents', novaOcorrencia);
     fetchOcorrencias();
   };
 
   const handleOcorrenciaEncerrar = async (id) => {
-    await axios.patch(`http://172.16.0.61:3000/incidents/${id}`, { status: 'encerrada' });
+    await axios.patch(`http://192.168.0.74:3000/incidents/${id}`, { status: 'encerrada' });
     fetchOcorrencias();
   };
 

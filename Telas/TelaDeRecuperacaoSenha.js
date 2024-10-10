@@ -18,7 +18,7 @@ export default function TelaDeRecuperacaoSenha() {
         }
 
         try {
-            const response = await fetch('http:// 172.16.0.61:3000/recuperar-senha', {
+            const response = await fetch('http:// 192.168.0.74:3000/recuperar-senha', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
