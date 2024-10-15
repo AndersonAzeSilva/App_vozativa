@@ -192,21 +192,6 @@ const IncidentManagementScreen = () => {
     setModalVisible(false);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pendente':
-        return '#FFD700'; // Amarelo
-      case 'em atendimento':
-        return '#FFA500'; // Laranja
-      case 'resolvida':
-        return '#008000'; // Verde
-      case 'encerrada':
-        return '#FF0000'; // Vermelho
-      default:
-        return '#000000'; // Preto (padrão)
-    }
-  };
-
   const renderItem = ({ item }) => (
     <View style={[styles.incidentItem, { borderColor: getStatusColor(item.status) }]}>
       <Text style={styles.incidentTitle}>{item.title}</Text>
@@ -241,25 +226,36 @@ const IncidentManagementScreen = () => {
     { label: 'Encerrada', value: 'encerrada' },
   ];
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pendente':
+        return '#808080'; //Cor cinza
+      case 'em atendimento':
+        return '#FFA500'; // cor laranja
+      case 'resolvida': 
+        return '#008000'; //Cor verde
+      case 'encerrada':
+        return '#ff0000'; //cor vermelho
+      default:
+        return '#000000'; //Cor preta
+    }
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
         data={incidents}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={<Text style={styles.emptyListText}>Nenhuma ocorrência registrada.</Text>}
       />
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
         <Text style={styles.addButtonText}>Adicionar Ocorrência</Text>
       </TouchableOpacity>
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={resetForm}
-      >
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>{editIncident ? 'Editar Ocorrência' : 'Registrar Ocorrência'}</Text>
+      <Modal visible={modalVisible} animationType="slide" onRequestClose={resetForm}>
+        <ScrollView contentContainerStyle={styles.modalContainer}>
+          <Text style={styles.modalTitle}>{editIncident ? 'Editar Ocorrência' : 'Nova Ocorrência'}</Text>
           <TextInput
             style={styles.input}
             placeholder="Título"
@@ -272,205 +268,307 @@ const IncidentManagementScreen = () => {
             value={incidentDescription}
             onChangeText={setIncidentDescription}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Tipo"
-            value={incidentType}
-            onChangeText={setIncidentType}
-          />
-          <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-            <Text style={styles.dateInput}>{incidentDate || 'Selecione a Data'}</Text>
-          </TouchableOpacity>
+          <TextInput style={styles.input} placeholder="Tipo" value={incidentType} onChangeText={setIncidentType} />
+          <View style={styles.dateTimeContainer}>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.datePickerText}>{incidentDate ? `Data: ${incidentDate}` : 'Selecionar Data'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+              <Text style={styles.timePickerText}>{incidentTime ? `Hora: ${incidentTime}` : 'Selecionar Hora'}</Text>
+            </TouchableOpacity>
+          </View>
+
           {showDatePicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="date"
-              is24Hour={true}
-              onChange={handleDateChange}
-            />
+            <DateTimePicker value={new Date()} mode="date" display="default" onChange={handleDateChange} />
           )}
-          <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-            <Text style={styles.dateInput}>{incidentTime || 'Selecione a Hora'}</Text>
-          </TouchableOpacity>
+
           {showTimePicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="time"
-              is24Hour={true}
-              onChange={handleTimeChange}
-            />
+            <DateTimePicker value={new Date()} mode="time" display="default" onChange={handleTimeChange} />
           )}
-          <Text style={styles.statusLabel}>Selecione o Status:</Text>
-          <View style={styles.statusButtonsContainer}>
-            {statusOptions.map((option) => (
+
+          <Text style={styles.label}>Imagens:</Text>
+          <View style={styles.imageContainer}>
+            <ScrollView horizontal>
+              {incidentImages.map((image, index) => (
+                <Image key={index} source={{ uri: image.uri }} style={styles.incidentImage} />
+              ))}
+            </ScrollView>
+          </View>
+          <View style={styles.imageButtonsContainer}>
+            <Button title="Selecionar da Galeria" onPress={selectImage} />
+            <Button title="Tirar Foto" onPress={takePhoto} />
+          </View>
+
+          <Text style={styles.label}>Status:</Text>
+          <View style={styles.statusContainer}>
+            {['pendente', 'em atendimento', 'resolvida', 'encerrada'].map((status) => (
               <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.statusButton,
-                  incidentStatus === option.value && { backgroundColor: getStatusColor(option.value) },
-                ]}
-                onPress={() => setIncidentStatus(option.value)}
+                key={status}
+                style={[styles.statusButton, incidentStatus === status && styles.activeStatusButton]}
+                onPress={() => setIncidentStatus(status)}
               >
-                <Text style={styles.statusButtonText}>{option.label}</Text>
+                <Text
+                  style={[
+                    styles.statusButtonText,
+                    incidentStatus === status && styles.activeStatusButtonText,
+                  ]}
+                >
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
-          <View style={styles.imageContainer}>
-            {incidentImages.map((image, index) => (
-              <Image key={index} source={{ uri: image.uri }} style={styles.selectedImage} />
-            ))}
-            <TouchableOpacity onPress={selectImage} style={styles.imageButton}>
-              <Text style={styles.imageButtonText}>Selecionar Imagem</Text>
+
+          <View style={styles.modalBotaoContainer}>
+            <TouchableOpacity style={styles.BotaoCancelar} onPress={resetForm}>
+              <Text style={styles.BotaoCancelarText}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={takePhoto} style={styles.imageButton}>
-              <Text style={styles.imageButtonText}>Tirar Foto</Text>
+            <TouchableOpacity style={styles.BotaoSalvar} onPress={handleRegisterIncident}>
+              <Text style={styles.BotaoSalvarText}>
+                {editIncident ? 'Salvar Alterações' : 'Registrar Ocorrência'}
+              </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.submitButton} onPress={handleRegisterIncident}>
-            <Text style={styles.submitButtonText}>Salvar</Text>
-          </TouchableOpacity>
-          <Button title="Fechar" onPress={resetForm} />
-        </View>
+        </ScrollView>
       </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  //estilizando o container de fundo da tela principal da tela de ocorrências
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#d3d3d3', //cor do fundo
   },
+  //estilizando a caixa de registro das ocorrências
   incidentItem: {
-    borderWidth: 2,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    padding: 10, //ajustando o texto dentro da caixa
+    marginVertical: 5, //margem vertical da caixa
+    borderWidth: 3, //largura da borda
+    borderRadius: 10, //borda da caixa
+    backgroundColor: '#FFFFFF', //cor da caixa
   },
+  //estilizando o titulo da caixa de ocorrências
   incidentTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 18, //tamanho da fonte
+    fontWeight: 'bold', //negrito
   },
+  //estilizando o texto do tipo de ocorrÊncia
   incidentType: {
-    fontSize: 14,
+    fontSize: 14, //tamanho da fonte do texto
+    fontWeight: 'bold', //negrito
+    color: '#000000', //cor do texto
   },
+  //estilizando o texto da data na caixa de registro da ocorrência
   incidentDate: {
-    fontSize: 14,
+    fontSize: 14, //tamanho do texto
+    color: '#0000cd', //cor do texto
   },
+  //estilizando o texto do horário na caixa de registro da ocorrência
   incidentTime: {
-    fontSize: 14,
+    fontSize: 14, //tamanho do texto
+    color: '#0000cd', //cor do texto
   },
+  //estilizando o texto da descrição da ocorrência
   incidentDescription: {
-    fontSize: 14,
+    fontSize: 14, //tamanho do texto
+    color: '#000000', //cor do texto
   },
+  //estilizando o texto do protocolo
   incidentProtocol: {
-    fontSize: 14,
-    fontStyle: 'italic',
+    fontSize: 14, //tamanho da fonte do texto
+    color: '#0000cd', //color do texto
+    marginVertical: 5,
   },
+  //estilizando o texto de status da ocorrÊncia no na caixa de registro
   incidentStatus: {
-    fontSize: 14,
-    marginTop: 5,
-  },
-  incidentImage: {
-    width: 100,
-    height: 100,
-    margin: 5,
+    fontSize: 18, //tamanho do texto
+    fontWeight: 'bold', //negrito
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10, //margem dos botões de editar e excluir da caixa de registro de ocorrência
   },
+  //estilizando o botão editar da caixa de registro da ocorrência
   editButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
+    padding: 5, //tamanho do botão
+    backgroundColor: '#007BFF', //cor do botão
+    borderRadius: 5, //arredondando as bordas do botão
   },
+  //estilizando o texto do botão editar da caixa de registro da ocorrência
+  editButtonText: {
+    color: '#FFFFFF', //cor do texto
+    fontSize: 14, //tamanho do texto
+  },
+  //estilizando o botão excluir da caixa de registro da ocorrência
   deleteButton: {
-    backgroundColor: '#FF0000',
-    padding: 10,
-    borderRadius: 5,
+    padding: 5, //tamanho do botão
+    backgroundColor: '#FF0000', //cor do botão
+    borderRadius: 5, //arredondando as bordas do botão
+  },
+  //estilizando o texto do botão excluir da caixa de registro da ocorrência
+  deleteButtonText: {
+    color: '#FFFFFF', //cor do texto
+    fontSize: 14, //tamanho do texto
+  },
+  //estilizando o container da lista de ocorrências
+  emptyListText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16, //tamanho da fonte do texto
+    color: '#999999',//cor
   },
   addButton: {
-    backgroundColor: '#28A745',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 10,
+    //estilizando o botão de adicionar ocorrência
+    padding: 10, //altura do botão
+    backgroundColor: '#3e606f', //cor do botão
+    borderRadius: 15, //arrendodamento da borda do botão
+    alignItems: 'center', //centralizando o texto dentro do botão
   },
+  //estilizando o texto do botão de adicionar ocorrência
   addButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: '#FFFFFF', //cor do texto
+    fontSize: 16, //tamanho do
   },
+  //estilizando o container modal a onde preenchemos os dados da ocorrência
   modalContainer: {
-    flex: 1,
     padding: 20,
+    backgroundColor: '#FFFFFF', //cor de fundo
+    flexGrow: 1,
   },
+  //estilizando o titulo do modal do registro de ocorrência
   modalTitle: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 25, //tamanho do texto
+    fontWeight: 'bold', //fonte do texto
+    marginBottom: 20, //margem do botão
+    
   },
+  //estilizando o os campos de texto do preenchimento da ocorrÊncia
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    borderWidth: 2, //largura daborda
+    borderColor: '#3e606f', //cor da borda
+    padding: 10, //altura entre os botões
+    borderRadius: 5, //arredondamento das bordas do botão
+    marginBottom: 15, //margem entre os botões
+    fontSize: 16, //fonte do texto
+    color: '#000000', //cor do texto
   },
-  dateInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  statusLabel: {
-    marginTop: 10,
-    fontSize: 16,
-  },
-  statusButtonsContainer: {
+  //estilizando o container da hora
+  dateTimeContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    marginBottom: 15, //espaçamento entre os botões
+  },
+  //estilizando o texto do botão da data
+  datePickerText: {
+    fontSize: 16, //tamanho do texto
+    color: '#007BFF', //cor do texto
+  },
+  //estilizando o texto do selecionar hora
+  timePickerText: {
+    fontSize: 16, //tamanho do texto
+    color: '#007BFF', //cor do texto
+  },
+  //estilizando a label do campo da foto
+  label: {
+    fontSize: 16, //tamanho da fonte do texto imagens e status
+    fontWeight: 'bold', //negrito
     marginBottom: 10,
   },
-  statusButton: {
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#f0f0f0',
-  },
-  statusButtonText: {
-    fontWeight: 'bold',
-  },
+  //estilizando o container do nome imagem
   imageContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15, //margem do botão
   },
-  selectedImage: {
+  incidentImage: {
     width: 100,
     height: 100,
-    margin: 5,
-  },
-  imageButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
+    marginRight: 10,
     borderRadius: 5,
-    margin: 5,
   },
-  imageButtonText: {
-    color: '#FFFFFF',
+  //estilizando o container do botão selecionar foto da galeria e tirar foto
+  imageButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
   },
-  submitButton: {
-    backgroundColor: '#28A745',
-    padding: 15,
+  //estilizando o container dos botões de status
+  statusContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20, //margem do botão
+  },
+  //estilizando o botão de status
+  statusButton: {
+    padding: 7,
+    backgroundColor: '#E0E0E0',
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 10,
+    marginHorizontal: 2,
+    marginTop: 10, //tamanho da margem do top
   },
-  submitButtonText: {
-    color: '#FFFFFF',
+  //estilizando o tamanho da fonte dos botões de status
+  statusButtonText: {
+    padding: 3,
+    paddingBottom: 3,
+    paddingRight: 3,
+    paddingTop: 10,
+    alignItems: 'center',
+    alignContent: 'center',
+    fontSize: 10, //tamanho da fonte
     fontWeight: 'bold',
   },
+  //estilizando o botão status de pendente 
+  activeStatusButton: {
+    padding: 11,
+    borderRadius: 5,
+    flex: 1,
+    backgroundColor: '#007BFF',
+    marginTop: 10, //atura do botão
+    justifyContent: 'center',
+    alignItems: 'center', //Centralizando o texto dentro do botão
+  },
+  //estilizando o texto do status de pendente
+  activeStatusButtonText: {
+    color: '#FFFFFF', //cor do texto 
+    fontSize: 12, //tamanho da fonte do texto
+    flex: 1,
+    alignItems: 'center', //alinhando o texto ao centro do botão
+    fontWeight: 'bold',
+  },
+  modalBotaoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  BotaoCancelar: {
+    padding: 10, //altura do botão
+    backgroundColor: '#FF0000', //cor do botão cancelar
+    borderRadius: 5, //arredondamento da borda do botão
+    flex: 1,
+    alignItems: 'center', //alinhando o texto ao centro do botão
+    marginRight: 10, //margem dirieita do botão
+  },
+  //estilizando o texto do botão Cancelar
+  BotaoCancelarText: {
+    color: '#FFFFFF', //cor do botão
+    fontSize: 16, //tamanho do texto
+  },
+  //estilizando o botão registrar ocorrência
+  BotaoSalvar: {
+    padding: 10, //tamanho do botão
+    backgroundColor: '#3e606f', //cor do botão
+    borderRadius: 5, //arredondando a borda do botão
+    flex: 1,
+    alignItems: 'center', //alinhando o texto ao centro do botão
+  },
+  //estilizando a cor do botão registrar
+  BotaoSalvarText: {
+    color: '#FFFFFF', //cor do texto
+    fontSize: 16, //tamanho do texto
+  },
 });
+
 
 export default IncidentManagementScreen;

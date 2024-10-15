@@ -10,6 +10,7 @@ import TelaInicio from './Telas/TelaInicio';
 import TelaPrincipal from './Telas/TelaPrincipal';
 import TelaDeCadastro from './Telas/TelaDeCadastro';
 import TelaPerfil from './Telas/TelaPerfil';
+import TelaPerfilAdmin from './Telas/TelaPerfilAdmin';
 import TelaDeOcorrencia from './Telas/TelaDeOcorrencia';
 import TelaRelatorios from './Telas/TelaRelatorios';
 import TelaUsuarios from './Telas/TelaUsuarios';
@@ -20,8 +21,12 @@ import TelaChamados from './Telas/TelaGerenciarOcorrencias';
 import TelaComentarios from './Telas/TelaComentarios';
 import TelaAdmin from './Telas/TelaAdmin';
 import TelaDeRecuperacaoSenha from './Telas/TelaDeRecuperacaoSenha';
-import TelaCadastrarSecretaria from './Telas/TelaCadastrarSecretaria'
-import TelaConsultarSecretaria from './Telas/TelaConsultarSecretaria'
+import TelaCadastrarSecretaria from './Telas/TelaCadastrarSecretaria';
+import TelaConsultarSecretaria from './Telas/TelaConsultarSecretaria';
+import TelaDadosPessoais from './Telas/TelaDadosPessoais';
+
+//importando componentes
+
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -32,6 +37,8 @@ function StackNavigator() {
       <Stack.Screen name="TelaInicio" component={TelaInicio} options={{ headerShown: false }} />
       <Stack.Screen name="TelaDeLogin" component={TelaDeLogin} options={{ headerShown: false }} />
       <Stack.Screen name="TelaPrincipal" component={TelaPrincipal} options={{ headerShown: false }} />
+      <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
+      <Stack.Screen name="TelaPerfilAdmin" component={TelaPerfilAdmin} />
       <Stack.Screen name="TelaDeCadastro" component={TelaDeCadastro} />
       <Stack.Screen name="TelaDeOcorrencia" component={TelaDeOcorrencia} />
       <Stack.Screen name="TelaRelatorios" component={TelaRelatorios} />
@@ -44,6 +51,7 @@ function StackNavigator() {
       <Stack.Screen name="TelaDeRecuperacaoSenha" component={TelaDeRecuperacaoSenha} />
       <Stack.Screen name="TelaCadastrarSecretaria" component={TelaCadastrarSecretaria} />
       <Stack.Screen name="TelaConsultarSecretaria" component={TelaConsultarSecretaria} />
+      <Stack.Screen name="TelaDadosPessoais" component={TelaDadosPessoais} />
       {/* Adicione a TelaAdmin ao StackNavigator */}
       <Stack.Screen name="TelaAdmin" component={AdminNavigator} options={{ headerShown: false }} />
     </Stack.Navigator>

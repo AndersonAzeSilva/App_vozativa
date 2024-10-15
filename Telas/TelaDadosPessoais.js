@@ -1,83 +1,128 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 export default function TelaDadosPessoais() {
     const navigation = useNavigation();
-    const [name, setName] = useState('José Anderson Azevedo Da Silva');
-    const [email, setEmail] = useState('andersonazessilva@gmail.com');
-    const [matricula, setMatricula] = useState('DG061195');
-    const [profilePicture, setProfilePicture] = useState(require('../image/Andersonperfil.png'));
 
-    // Função para selecionar a imagem do perfil
-    const selectImage = () => {
-        launchImageLibrary({}, (response) => {
+    // Estados para cada campo do formulário
+    const [nome, setNome] = useState("José Anderson Azevedo Da Silva");
+    const [email, setEmail] = useState("andersonazessilva@gmail.com");
+    const [telefone, setTelefone] = useState("(11) 99999-9999");
+    const [cpf, setCpf] = useState("123.456.789-00");
+    const [endereco, setEndereco] = useState("Rua das Flores, 123");
+    const [senha, setSenha] = useState("senha123");
+    const [confirmeSenha, setConfirmeSenha] = useState("senha123");
+    const [matricula, setMatricula] = useState("DG061195");
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [fotoPerfil, setFotoPerfil] = useState(null);
+
+    const salvarDados = () => {
+        // Lógica para validar os dados antes de salvar
+        if (senha !== confirmeSenha) {
+            Alert.alert("Erro", "As senhas não correspondem!");
+            return;
+        }
+
+        // Aqui você pode adicionar a lógica para salvar os dados no banco de dados
+        Alert.alert("Dados salvos", "Seus dados pessoais foram atualizados com sucesso!");
+        navigation.goBack(); // Volta para a tela anterior após salvar
+    };
+
+    const escolherFoto = () => {
+        const options = {
+            mediaType: 'photo',
+            quality: 1,
+        };
+
+        launchImageLibrary(options, (response) => {
             if (response.didCancel) {
-                Alert.alert('Seleção cancelada', 'Você não selecionou nenhuma imagem.');
-            } else if (response.errorCode) {
-                Alert.alert('Erro', 'Erro ao selecionar a imagem. Tente novamente.');
-            } else if (response.assets && response.assets.length > 0) {
-                setProfilePicture({ uri: response.assets[0].uri });
+                console.log('Usuário cancelou a seleção de imagem');
+            } else if (response.error) {
+                console.log('Erro ao escolher imagem: ', response.error);
             } else {
-                Alert.alert('Erro', 'Nenhuma imagem selecionada.');
+                setFotoPerfil(response.assets[0].uri); // Armazena a URI da imagem escolhida
             }
         });
     };
 
-    const saveData = () => {
-        if (!name || !email || !matricula) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
-            return;
-        }
-
-        // Lógica para salvar os dados, pode incluir uma requisição à API
-        Alert.alert('Dados Salvos', 'As informações foram salvas com sucesso!');
-        
-        // Limpar os campos (opcional)
-        setName('');
-        setEmail('');
-        setMatricula('');
-        setProfilePicture(require('../image/Andersonperfil.png')); // Resetar imagem padrão
-    };
-
     return (
         <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={selectImage}>
-                    <Image
-                        source={profilePicture}
-                        style={styles.profileImage}
-                    />
+            <View style={styles.perfilBar}>
+                <TouchableOpacity onPress={escolherFoto}>
+                    {fotoPerfil ? (
+                        <Image source={{ uri: fotoPerfil }} style={styles.fotoPerfil} />
+                    ) : (
+                        <View style={styles.fotoPerfilPlaceholder}>
+                            <Text style={styles.placeholderText}>Clique para adicionar foto</Text>
+                        </View>
+                    )}
                 </TouchableOpacity>
-                <TextInput
-                    style={styles.input}
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Nome completo"
+                <Text style={styles.nomePerfil}>{nome}</Text>
+            </View>
+            <View style={styles.form}>
+                <Text style={styles.label}>Nome:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={nome} 
+                    onChangeText={setNome} 
                 />
-                <TextInput
-                    style={styles.input}
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="E-mail"
+                
+                <Text style={styles.label}>E-mail:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={email} 
+                    onChangeText={setEmail} 
                     keyboardType="email-address"
                 />
-                <TextInput
-                    style={styles.input}
-                    value={matricula}
-                    onChangeText={setMatricula}
-                    placeholder="Matrícula"
+                
+                <Text style={styles.label}>Telefone:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={telefone} 
+                    onChangeText={setTelefone} 
                 />
+                
+                <Text style={styles.label}>CPF:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={cpf} 
+                    onChangeText={setCpf} 
+                />
+                
+                <Text style={styles.label}>Endereço:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={endereco} 
+                    onChangeText={setEndereco} 
+                />
+                
+                <Text style={styles.label}>Senha:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={senha} 
+                    onChangeText={setSenha} 
+                    secureTextEntry
+                />
+                
+                <Text style={styles.label}>Confirme a Senha:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={confirmeSenha} 
+                    onChangeText={setConfirmeSenha} 
+                    secureTextEntry
+                />
+
+                <Text style={styles.label}>Matrícula:</Text>
+                <TextInput 
+                    style={styles.input} 
+                    value={matricula} 
+                    onChangeText={setMatricula} 
+                />
+
+                <Button title="Salvar" onPress={salvarDados} />
             </View>
-
-            <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('TelaDadosPessoais')}>
-                <Text style={styles.menuText}>Dados pessoais</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.saveButton} onPress={saveData}>
-                <Text style={styles.saveButtonText}>Salvar Dados</Text>
-            </TouchableOpacity>
         </ScrollView>
     );
 }
@@ -85,39 +130,52 @@ export default function TelaDadosPessoais() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 20,
         backgroundColor: '#f0f0f0',
     },
-    header: {
+    perfilBar: {
+        flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 20,
+    },
+    fotoPerfil: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginRight: 15,
+    },
+    fotoPerfilPlaceholder: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 15,
+    },
+    placeholderText: {
+        color: '#fff',
+        textAlign: 'center',
+    },
+    nomePerfil: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    form: {
         backgroundColor: '#ffffff',
         padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
+        borderRadius: 8,
+        elevation: 1,
     },
-    profileImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginBottom: 10,
+    label: {
+        fontSize: 16,
+        marginBottom: 8,
     },
     input: {
-        height: 40,
-        borderColor: '#ddd',
         borderWidth: 1,
-        borderRadius: 5,
-        width: '80%',
-        marginBottom: 10,
-        paddingHorizontal: 10,
-    },
-    saveButton: {
-        backgroundColor: '#e91e63',
+        borderColor: '#ccc',
         padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-        margin: 20,
-    },
-    saveButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
+        borderRadius: 4,
+        marginBottom: 20,
     },
 });

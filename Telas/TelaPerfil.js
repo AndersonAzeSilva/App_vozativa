@@ -1,18 +1,16 @@
-import React from 'react';
+import React from 'react'; 
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function TelaPerfil() {
   const navigation = useNavigation();
 
+  const dadospessoais = () => {
+    navigation.navigate("TelaDadosPessoais"); // Navegar para a tela de dados pessoais
+  };
+
   const logout = () => {
-    // Aqui você pode adicionar a lógica para invalidar o token ou sessão no backend, se necessário
-    // Por exemplo, se você estiver usando um token JWT, pode armazená-lo no armazenamento local e removê-lo aqui
-
-    // Remover o token do armazenamento local (exemplo)
-    // AsyncStorage.removeItem('token'); // caso você esteja usando AsyncStorage
-
-    // Redirecionar para a tela de login
+    // Alerta de confirmação de logout
     Alert.alert("Logout", "Você foi desconectado com sucesso!", [
       { text: "OK", onPress: () => navigation.navigate("TelaDeLogin") }
     ]);
@@ -27,11 +25,13 @@ export default function TelaPerfil() {
         />
         <Text style={styles.name}>José Anderson Azevedo Da Silva</Text>
         <Text style={styles.email}>andersonazessilva@gmail.com</Text>
-        <Text style={styles.code}>Matricula: <Text style={styles.codeHighlight}>DG061195</Text></Text>
+        <Text style={styles.code}>
+          Matricula: <Text style={styles.codeHighlight}>DG061195</Text>
+        </Text>
       </View>
 
       <View style={styles.menu}>
-        <TouchableOpacity style={styles.menuItem}>
+      <TouchableOpacity style={styles.menuItem} onPress={dadospessoais}>
           <Text style={styles.menuText}>Dados pessoais</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>

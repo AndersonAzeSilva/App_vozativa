@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Calendar } from 'react-native-calendars'; // Certifique-se de instalar esta biblioteca
+import { Calendar } from 'react-native-calendars';
 
 const TelaCadastrarSecretaria = () => {
   const [name, setName] = useState('');
@@ -10,41 +10,40 @@ const TelaCadastrarSecretaria = () => {
   const [phone, setPhone] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [availableTimes, setAvailableTimes] = useState([{ startTime: '', endTime: '' }]);
-  const [availableDates, setAvailableDates] = useState({}); // Para armazenar as datas disponíveis
-  const [selectedDate, setSelectedDate] = useState(''); // Para armazenar a data selecionada
+  const [markedDates, setMarkedDates] = useState({});
+  const [selectedDate, setSelectedDate] = useState('');
 
   useEffect(() => {
-    // Simulando a recuperação das datas disponíveis (substitua por uma chamada à sua API)
     fetchAvailableDates();
   }, []);
 
   const fetchAvailableDates = async () => {
-    // Aqui você deve buscar as datas disponíveis da sua API
+    // Simulação de datas disponíveis; buscar da API
     const dates = {
-      '2024-10-10': { selected: false, marked: true, dotColor: 'green' },
-      '2024-10-12': { selected: false, marked: true, dotColor: 'green' },
-      '2024-10-15': { selected: false, marked: true, dotColor: 'green' },
+      '2024-10-10': { marked: true, dotColor: 'green' },
+      '2024-10-12': { marked: true, dotColor: 'green' },
+      '2024-10-15': { marked: true, dotColor: 'green' },
     };
-    setAvailableDates(dates);
+    setMarkedDates(dates);
   };
 
   const handleRegister = async () => {
-    // Validação dos campos
-    if (!name || !email || !address || !phone || !profileImage || !selectedDate) {
+    // Verifica se todos os campos obrigatórios estão preenchidos
+    if (!name || !email || !address || !phone || !profileImage || availableTimes.length === 0) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios.');
       return;
     }
-
-    // Verifica se todos os horários estão preenchidos
+  
+    // Valida os horários disponíveis
     for (const time of availableTimes) {
-      if (!time.startTime || !time.endTime) {
+      if (!time.start_time || !time.end_time) { // Garantindo que usamos start_time e end_time
         Alert.alert('Erro', 'Por favor, preencha todos os horários disponíveis.');
         return;
       }
     }
-
+  
     try {
-      // Cadastrar a secretária e os horários
+      // Enviando dados para o servidor
       const secretaryResponse = await fetch('http://192.168.0.74:3000/secretaries', {
         method: 'POST',
         headers: {
@@ -56,31 +55,50 @@ const TelaCadastrarSecretaria = () => {
           address,
           phone,
           profileImage,
-          availableTimes, // Passando horários disponíveis
-          selectedDate, // Passando a data selecionada
+          availableTimes: availableTimes.map(time => ({
+            start_time: time.start_time, // Garantindo o uso correto do nome da propriedade
+            end_time: time.end_time       // Garantindo o uso correto do nome da propriedade
+          })),
         }),
       });
-
-      // Verificando a resposta da API
+  
+      // Logando a resposta completa para análise
+      console.log('Resposta da API:', secretaryResponse);
+  
+      // Garantindo que a resposta seja convertida para JSON se possível
+      let responseData;
+      try {
+        responseData = await secretaryResponse.json();
+        console.log('Dados da resposta:', responseData);
+      } catch (jsonError) {
+        console.error('Erro ao processar o JSON da resposta:', jsonError);
+        Alert.alert('Erro', 'Resposta inesperada do servidor.');
+        return;
+      }
+  
       if (secretaryResponse.ok) {
         Alert.alert('Sucesso', 'Secretária cadastrada com sucesso!');
-        // Limpa os campos após o cadastro
+  
+        // Limpar os campos após o sucesso
         setName('');
         setEmail('');
         setAddress('');
         setPhone('');
-        setAvailableTimes([{ startTime: '', endTime: '' }]); // Resetando horários
+        setAvailableTimes([{ start_time: '', end_time: '' }]); // Inicializa novamente com valores vazios
         setProfileImage(null);
-        setSelectedDate(''); // Resetando data
+        // Se não estiver usando setSelectedDate e setMarkedDates, você pode removê-los
       } else {
-        const errorData = await secretaryResponse.json(); // Obter detalhes do erro
-        Alert.alert('Erro', `Erro ao cadastrar a secretária: ${errorData.message || 'Erro desconhecido.'}`);
+        // Exibir mensagem de erro da resposta, se existir
+        const errorMessage = responseData.message || 'Erro desconhecido.';
+        Alert.alert('Erro', `Erro ao cadastrar a secretária: ${errorMessage}`);
       }
     } catch (error) {
       Alert.alert('Erro', 'Erro ao conectar ao servidor. Tente novamente.');
-      console.error(error);
+      console.error('Erro na requisição:', error);
     }
   };
+  
+  
 
   const handlePickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -108,12 +126,22 @@ const TelaCadastrarSecretaria = () => {
   };
 
   const onDayPress = (day) => {
-    if (availableDates[day.dateString]) {
-      setSelectedDate(day.dateString);
-      const updatedDates = { ...availableDates };
-      updatedDates[day.dateString].selected = !updatedDates[day.dateString].selected;
-      setAvailableDates(updatedDates);
-    }
+    const newMarkedDates = { ...markedDates };
+
+    Object.keys(newMarkedDates).forEach((date) => {
+      if (newMarkedDates[date].selected) {
+        newMarkedDates[date].selected = false;
+      }
+    });
+
+    newMarkedDates[day.dateString] = {
+      selected: true,
+      marked: true,
+      selectedColor: 'blue',
+    };
+
+    setMarkedDates(newMarkedDates);
+    setSelectedDate(day.dateString);
   };
 
   return (
@@ -146,7 +174,7 @@ const TelaCadastrarSecretaria = () => {
         onChangeText={setPhone}
         keyboardType="phone-pad"
       />
-      
+
       <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
         {profileImage ? (
           <Image source={{ uri: profileImage }} style={styles.image} />
@@ -155,10 +183,16 @@ const TelaCadastrarSecretaria = () => {
         )}
       </TouchableOpacity>
 
-      {/* Calendário para selecionar datas disponíveis */}
       <Calendar
-        markedDates={availableDates}
+        markedDates={markedDates}
         onDayPress={onDayPress}
+        theme={{
+          selectedDayBackgroundColor: 'blue',
+          selectedDayTextColor: '#fff',
+          todayTextColor: 'red',
+          dayTextColor: '#2d4150',
+          monthTextColor: '#2d4150',
+        }}
       />
 
       {availableTimes.map((time, index) => (
@@ -177,6 +211,7 @@ const TelaCadastrarSecretaria = () => {
           />
         </View>
       ))}
+
       <TouchableOpacity style={styles.addTimeButton} onPress={addAvailableTime}>
         <Text style={styles.buttonText}>Adicionar Horário</Text>
       </TouchableOpacity>

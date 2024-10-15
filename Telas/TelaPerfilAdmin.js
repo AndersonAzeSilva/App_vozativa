@@ -1,18 +1,15 @@
-import React from 'react'; 
+import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function TelaPerfil() {
+export default function TelaPerfilAdmin() {
   const navigation = useNavigation();
 
+  const dadospessoais = () => {
+    navigation.navigate("TelaDadosPessoais"); // Navegar para a tela de dados pessoais
+  };
+
   const logout = () => {
-    // Aqui você pode adicionar a lógica para invalidar o token ou sessão no backend, se necessário
-    // Por exemplo, se você estiver usando um token JWT, pode armazená-lo no armazenamento local e removê-lo aqui
-
-    // Remover o token do armazenamento local (exemplo)
-    // AsyncStorage.removeItem('token'); // caso você esteja usando AsyncStorage
-
-    // Alerta de confirmação de logout
     Alert.alert("Logout", "Você foi desconectado com sucesso!", [
       { text: "OK", onPress: () => navigation.navigate("TelaDeLogin") }
     ]);
@@ -22,7 +19,7 @@ export default function TelaPerfil() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require('../image/Andersonperfil.png')} // adicionando a Foto
+          source={require('../image/Andersonperfil.png')}
           style={styles.profileImage}
         />
         <Text style={styles.name}>José Anderson Azevedo Da Silva</Text>
@@ -33,7 +30,7 @@ export default function TelaPerfil() {
       </View>
 
       <View style={styles.menu}>
-        <TouchableOpacity style={styles.menuItem}>
+      <TouchableOpacity style={styles.menuItem} onPress={dadospessoais}>
           <Text style={styles.menuText}>Dados pessoais</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
@@ -97,7 +94,7 @@ const styles = StyleSheet.create({
   },
   codeHighlight: {
     fontWeight: 'bold',
-    color: '#e91e63', // Cor para destacar o código
+    color: '#e91e63',
   },
   menu: {
     marginTop: 20,

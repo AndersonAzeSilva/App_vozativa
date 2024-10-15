@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { Button, Input, Text, CheckBox } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -15,6 +15,7 @@ export default function TelaDeCadastro({ navigation }) {
         senha: "",
         confirmeSenha: "",
         isAdmin: false, // Novo campo para verificar se é administrador
+        matricula: "",  // Campo para a matrícula
     });
     const [loading, setLoading] = useState(false);
     const [senhaVisible, setSenhaVisible] = useState(false);
@@ -22,7 +23,7 @@ export default function TelaDeCadastro({ navigation }) {
 
     const createUser = async () => {
         try {
-            const response = await fetch('http:// 192.168.0.74:3000/register', {
+            const response = await fetch('http://192.168.0.74:3000/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ export default function TelaDeCadastro({ navigation }) {
     };
 
     const validarCampos = () => {
-        const { nome, email, telefone, cpf, endereco, senha, confirmeSenha } = form;
+        const { nome, email, telefone, cpf, endereco, senha, confirmeSenha, isAdmin, matricula } = form;
         if (!nome || !email || !telefone || !cpf || !endereco || !senha || !confirmeSenha) {
             Alert.alert("Erro", "Todos os campos são obrigatórios!");
             return false;
@@ -62,6 +63,11 @@ export default function TelaDeCadastro({ navigation }) {
         // Implementar validação para CPF
         if (!validarCPF(cpf)) {
             Alert.alert("Erro", "CPF inválido!");
+            return false;
+        }
+        // Validação da matrícula se o usuário for servidor público
+        if (isAdmin && !matricula) {
+            Alert.alert("Erro", "O campo de matrícula é obrigatório para servidores públicos!");
             return false;
         }
         return true;
@@ -157,6 +163,15 @@ export default function TelaDeCadastro({ navigation }) {
                             onPress={() => setForm(prev => ({ ...prev, isAdmin: !prev.isAdmin }))}
                         />
                     </View>
+                    {/* Campo para matrícula, exibido apenas se o checkbox estiver marcado */}
+                    {form.isAdmin && (
+                        <InputField 
+                            label="Matrícula*" 
+                            placeholder="Digite sua Matrícula" 
+                            value={form.matricula} 
+                            onChangeText={text => setForm(prev => ({ ...prev, matricula: text }))} 
+                        />
+                    )}
                     <Button
                         icon={<Icon name="user" size={15} color="white" />}
                         title={loading ? "Cadastrando..." : "Salvar"}
