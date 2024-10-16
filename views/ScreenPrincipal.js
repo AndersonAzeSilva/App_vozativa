@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import IncidentManagementScreen from './TelaDeOcorrencia'; // Corrigindo a importação da tela de gerenciamento de ocorrências
-import TelaDeAgendamento from './TelaDeAgendamento';
+import IncidentManagementScreen from './ScreenOcorrencia'; // Corrigindo a importação da tela de gerenciamento de ocorrências
+import TelaDeAgendamento from './ScreenAgendamento';
 
 // Componente Feed
 function Feed() {

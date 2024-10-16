@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import IncidentManagementScreen from './IncidentManagementScreen';  // Importando a tela de gerenciamento de ocorrências
+import IncidentManagementScreen from './ScreenManagementScreen';  // Importando a tela de gerenciamento de ocorrências
 
 function Feed() {
   return (
